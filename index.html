@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فاتورتي الاحترافية | Quick Invoice Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12 font-sans">
+
+    <!-- رأس الصفحة -->
+    <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-5 shadow-lg text-center rounded-b-3xl mb-6">
+        <h1 class="text-2xl font-extrabold tracking-wide">⚡ فاتورتي الاحترافية</h1>
+        <p class="text-xs text-violet-200 mt-1" id="liveDateTime">جاري تحديث التاريخ...</p>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 space-y-5">
+        
+        <!-- قسم البيانات -->
+        <section class="bg-slate-800/80 backdrop-blur p-4 rounded-2xl shadow-md border border-slate-700/50 space-y-3">
+            <h2 class="text-xs font-bold text-violet-400 tracking-wider uppercase">1. البيانات الأساسية</h2>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">اسم نشاطك التجاري (محفوظ تلقائياً):</label>
+                <input type="text" id="storeName" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500" placeholder="مثال: متجري المميز">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">اسم العميل الحالي:</label>
+                <input type="text" id="clientName" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500" placeholder="مثال: أحمد محمد">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">رقم واتساب العميل:</label>
+                <input type="text" id="clientPhone" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500" placeholder="مثال: 2010xxxxxxxx+">
+            </div>
+        </section>
+
+        <!-- قسم المنتجات -->
+        <section class="bg-slate-800/80 backdrop-blur p-4 rounded-2xl shadow-md border border-slate-700/50 space-y-3">
+            <h2 class="text-xs font-bold text-violet-400 tracking-wider uppercase">2. إضافة المنتجات</h2>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">اختر من منتجاتك السابقة:</label>
+                <select id="savedProductsSelect" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500">
+                    <option value="">-- اختر منتجاً محفوظاً --</option>
+                </select>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <input type="text" id="prodName" placeholder="أو اكتب اسم منتج جديد" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="prodPrice" placeholder="السعر" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500">
+                    <input type="number" id="prodQty" placeholder="الكمية" value="1" class="w-full p-2.5 text-sm bg-slate-900 border border-slate-700 rounded-xl outline-none text-white focus:border-violet-500">
+                </div>
+                <button id="addProdBtn" class="w-full bg-violet-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-violet-500 shadow-lg shadow-violet-600/20 transition active:scale-95">+ إضافة للقائمة</button>
+            </div>
+
+            <div class="mt-4 overflow-x-auto rounded-xl border border-slate-700">
+                <table class="w-full text-xs text-right border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-slate-400">
+                            <th class="p-2.5">المنتج</th>
+                            <th class="p-2.5">السعر</th>
+                            <th class="p-2.5">الكمية</th>
+                            <th class="p-2.5">المجموع</th>
+                            <th class="p-2.5 text-center">حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody" class="divide-y divide-slate-700"></tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-between items-center pt-3 border-t border-slate-700 font-bold text-sm">
+                <span class="text-slate-300">الإجمالي النهائي:</span>
+                <span id="grandTotal" class="text-emerald-400 text-base">0.00 ج.م</span>
+            </div>
+        </section>
+
+        <!-- أزرار الإجراءات والطباعة -->
+        <section class="space-y-3 pt-2">
+            <button id="sendWhatsappBtn" class="w-full bg-emerald-600 text-white py-3 rounded-2xl text-sm font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+                <span>💬 إرسال الفاتورة عبر واتساب</span>
+            </button>
+            <button id="printPdfBtn" class="w-full bg-slate-700 text-slate-200 py-3 rounded-2xl text-sm font-medium hover:bg-slate-600 shadow-md transition flex items-center justify-center gap-2">
+                <span>🖨️ طباعة الفاتورة الرسمية (PDF)</span>
+            </button>
+            <button id="printBluetoothBtn" class="w-full bg-indigo-600 text-white py-3 rounded-2xl text-sm font-bold hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
+                <span>🖨️ طباعة عبر بلوتوث (حرارية كاشير)</span>
+            </button>
+            <button id="resetClientBtn" class="w-full bg-rose-950/40 text-rose-300 border border-rose-900/50 py-2.5 rounded-2xl text-xs font-medium hover:bg-rose-900/40 transition">
+                🔄 إنهاء الحساب الحالي والبدء بزبون جديد
+            </button>
+        </section>
+
+        <!-- لوحة مبيعات اليوم التراكمية -->
+        <section class="bg-slate-800/50 border border-slate-700/60 p-4 rounded-2xl space-y-3 mt-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-bold text-amber-400 tracking-wider uppercase">📊 إجمالي مبيعات اليوم التراكمي</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 text-center text-xs pt-1">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="block text-slate-400 text-[10px] mb-1">المبلغ الإجمالي اليوم</span>
+                    <span id="dailyTotalSales" class="font-bold text-emerald-400 text-base">0.00 ج.م</span>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="block text-slate-400 text-[10px] mb-1">عدد عملاء اليوم</span>
+                    <span id="dailyClientsCount" class="font-bold text-violet-400 text-base">0</span>
+                </div>
+            </div>
+
+            <button id="exportExcelBtn" class="w-full bg-amber-600 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-amber-500 shadow transition flex items-center justify-center gap-2 mt-2">
+                <span>📥 تحميل تقرير جميع العملاء (Excel / CSV)</span>
+            </button>
+            
+            <button id="clearDayBtn" class="w-full bg-red-950/50 text-red-300 border border-red-900/50 py-2 rounded-xl text-xs font-medium hover:bg-red-900/50 transition">
+                🗑️ تصفير تقرير اليوم والبدء بتقرير جديد
+            </button>
+        </section>
+
+    </main>
+
+    <!-- قالب الفاتورة للطباعة العادية -->
+    <div id="printReceiptTemplate" class="hidden">
+        <div style="font-family: Arial, sans-serif; padding: 30px; direction: rtl; color: #000; width: 100%; max-width: 700px; margin: auto; background: #fff;">
+            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+                <h1 id="printStoreName" style="margin: 0; font-size: 28px; font-weight: bold; color: #111;">متجري</h1>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">فاتورة مبيعات رسمية</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 20px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div><strong>التاريخ والوقت:</strong> <span id="printDateTime"></span></div>
+                <div><strong>اسم العميل:</strong> <span id="printClientName"></span></div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 25px;">
+                <thead>
+                    <tr style="background: #e2e8f0; color: #000;">
+                        <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">المنتج</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #cbd5e1;">السعر</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #cbd5e1;">الكمية</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1;">المجموع</th>
+                    </tr>
+                </thead>
+                <tbody id="printItemsBody"></tbody>
+            </table>
+
+            <div style="text-align: left; font-size: 18px; font-weight: bold; border-top: 2px solid #333; padding-top: 15px; margin-top: 10px;">
+                الإجمالي الكلي: <span id="printGrandTotal" style="color: #059669;"></span> ج.م
+            </div>
+
+            <div style="text-align: center; font-size: 13px; margin-top: 40px; color: #666; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+                شكراً لتعاملك معنا! نسعد خدمتكم دائماً ✨
+            </div>
+        </div>
+    </div>
+
+    <!-- بطاقة التواصل الرسمية في أسفل التطبيق -->
+    <footer class="max-w-md mx-auto px-4 text-center text-xs text-slate-400 mt-10 space-y-3 border-t border-slate-800 pt-5">
+        <p>تم التطوير بكل إتقان بواسطة <span class="text-violet-400 font-bold">هدية محمود هدية</span></p>
+        <div class="flex justify-center items-center gap-4 text-violet-400 flex-wrap">
+            <a href="mailto:mhoho353@Gmail.com" class="hover:underline bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">📧 البريد الإلكتروني</a>
+            <a href="https://github.com/" target="_blank" class="hover:underline bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">💻 GitHub</a>
+        </div>
+        <p class="text-[10px] text-slate-500">جميع الحقوق محفوظة © 2026</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
